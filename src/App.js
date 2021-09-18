@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Navbar from "./components/Navbar";
+import Content from "./components/Content";
+import Data from "./components/Data";
+//import "./App.css";
+import axios from "axios";
 
-function App() {
+const App = () => {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/v1/characters", {
+        method: "GET",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Methods": "GET",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
+      .then((data) => {
+        const datas = data.data.characters;
+        setData(datas);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, []);
+  //console.log(data);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* {console.log(data)} */}
+      <Navbar />
+
+      <Content />
+      {data.map((el) => {
+        console.log(el);
+        return <Data name={el.name} house={el.house} image={el.image} />;
+      })}
     </div>
   );
-}
+};
 
 export default App;
